@@ -7,8 +7,8 @@ import time
 import requests
 import subprocess
 
-DEBUG = os.environ.get('DEIS_DEBUG') in ('true', '1')
-registryLocation = os.getenv('DEIS_REGISTRY_LOCATION', 'on-cluster')
+DEBUG = os.environ.get('DRYCC_DEBUG') in ('true', '1')
+registryLocation = os.getenv('DRYCC_REGISTRY_LOCATION', 'on-cluster')
 
 
 def log_output(stream, decode):
@@ -41,10 +41,10 @@ def log(msg):
 
 
 def get_registry_name():
-    hostname = os.getenv('DEIS_REGISTRY_HOSTNAME', "")
+    hostname = os.getenv('DRYCC_REGISTRY_HOSTNAME', "")
     hostname = hostname.replace("https://", "").replace("http://", "")
     if registryLocation == "off-cluster":
-        organization = os.getenv('DEIS_REGISTRY_ORGANIZATION')
+        organization = os.getenv('DRYCC_REGISTRY_ORGANIZATION')
         regName = ""
         # empty hostname means dockerhub and hence no need to prefix the image
         if hostname != "":
@@ -57,14 +57,14 @@ def get_registry_name():
     elif registryLocation == "ecr":
         return hostname
     elif registryLocation == "gcr":
-        return hostname + "/" + os.getenv('DEIS_REGISTRY_GCS_PROJ_ID')
+        return hostname + "/" + os.getenv('DRYCC_REGISTRY_GCS_PROJ_ID')
     else:
-        return "{}:{}".format(os.getenv("DEIS_REGISTRY_SERVICE_HOST"),
-                              os.getenv("DEIS_REGISTRY_SERVICE_PORT"))
+        return "{}:{}".format(os.getenv("DRYCC_REGISTRY_SERVICE_HOST"),
+                              os.getenv("DRYCC_REGISTRY_SERVICE_PORT"))
 
 
 def download_file(tar_path):
-    os.putenv('BUCKET_FILE', "/var/run/secrets/deis/objectstore/creds/builder-bucket")
+    os.putenv('BUCKET_FILE', "/var/run/secrets/drycc/objectstore/creds/builder-bucket")
     if os.getenv('BUILDER_STORAGE') == "minio":
         os.makedirs("/tmp/objectstore/minio")
         bucketFile = open('/tmp/objectstore/minio/builder-bucket', 'w')
@@ -72,7 +72,7 @@ def download_file(tar_path):
         bucketFile.close()
         os.putenv('BUCKET_FILE', "/tmp/objectstore/minio/builder-bucket")
     elif os.getenv('BUILDER_STORAGE') in ["azure", "swift"]:
-        os.putenv('CONTAINER_FILE', "/var/run/secrets/deis/objectstore/creds/builder-container")
+        os.putenv('CONTAINER_FILE', "/var/run/secrets/drycc/objectstore/creds/builder-container")
     command = [
         "objstorage",
         "--storage-type="+os.getenv('BUILDER_STORAGE'),
@@ -85,7 +85,7 @@ def download_file(tar_path):
 
 tar_path = os.getenv('TAR_PATH')
 if tar_path:
-    if os.path.exists("/var/run/secrets/deis/objectstore/creds/"):
+    if os.path.exists("/var/run/secrets/drycc/objectstore/creds/"):
         download_file(tar_path)
     else:
         r = requests.get(tar_path)
@@ -106,9 +106,9 @@ with open("/app/Dockerfile", "a") as dockerfile:
         dockerfile.write("ARG {}\n".format(envvar))
 client = docker.Client(version='auto')
 if registryLocation != "on-cluster":
-    registry = os.getenv('DEIS_REGISTRY_HOSTNAME', 'https://index.docker.io/v1/')
-    username = os.getenv('DEIS_REGISTRY_USERNAME')
-    password = os.getenv('DEIS_REGISTRY_PASSWORD')
+    registry = os.getenv('DRYCC_REGISTRY_HOSTNAME', 'https://index.docker.io/v1/')
+    username = os.getenv('DRYCC_REGISTRY_USERNAME')
+    password = os.getenv('DRYCC_REGISTRY_PASSWORD')
     client.login(username=username, password=password, registry=registry)
 registry = get_registry_name()
 imageName, imageTag = os.getenv('IMG_NAME').split(":", 1)

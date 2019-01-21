@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: dockerbuilder-config
   labels:
-    heritage: deis
+    heritage: drycc
 data:
   image: "quay.io/{{.Values.org}}/dockerbuilder:{{.Values.docker_tag}}"
   pullpolicy: {{ .Values.pull_policy }}
