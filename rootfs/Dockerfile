@@ -12,9 +12,6 @@ RUN buildDeps='gcc git libffi-dev libssl-dev python3-dev python3-pip python3-whe
     apt-get purge -y --auto-remove $buildDeps && \
     apt-get autoremove -y && \
     apt-get clean -y && \
-    # package up license files if any by appending to existing tar
-    COPYRIGHT_TAR='/usr/share/copyrights.tar'; \
-    gunzip -f $COPYRIGHT_TAR.gz; tar -rf $COPYRIGHT_TAR /usr/share/doc/*/copyright; gzip $COPYRIGHT_TAR && \
     rm -rf \
         /usr/share/doc \
         /usr/share/man \
@@ -30,7 +27,7 @@ RUN buildDeps='gcc git libffi-dev libssl-dev python3-dev python3-pip python3-whe
         /usr/lib/x86_64-linux-gnu/gconv/EBC* && \
     bash -c "mkdir -p /usr/share/man/man{1..8}"
 
-ADD https://storage.googleapis.com/object-storage-cli/bb8e054/objstorage-bb8e054-linux-amd64 /bin/objstorage
+ADD https://github.com/drycc/object-storage-cli/releases/download/v1.0.1/objstorage-v1.0.1-linux-amd64 /bin/objstorage
 RUN chmod +x /bin/objstorage
 
 COPY . /

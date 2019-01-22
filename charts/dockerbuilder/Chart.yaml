@@ -1,5 +1,5 @@
 name: dockerbuilder
-home: https://github.com/dryccthree/dockerbuilder
+home: https://github.com/drycc/dockerbuilder
 version: <Will be populated by the ci before publishing the chart>
 description: Drycc dockerbuilder builds your app from a Dockerfile inside a Kubernetes pod, used by Drycc Workflow.
 maintainers:
