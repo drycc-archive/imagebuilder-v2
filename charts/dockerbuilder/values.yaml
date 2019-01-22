@@ -1,3 +1,4 @@
 org: "drycc"
 pull_policy: "Always"
-docker_tag: canary
+docker_tag: "canary"
+docker_registry: ""

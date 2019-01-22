@@ -5,5 +5,5 @@ metadata:
   labels:
     heritage: drycc
 data:
-  image: "quay.io/{{.Values.org}}/dockerbuilder:{{.Values.docker_tag}}"
+  image: "{{.Values.docker_registry}}{{.Values.org}}/dockerbuilder:{{.Values.docker_tag}}"
   pullpolicy: {{ .Values.pull_policy }}
