@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+TAR_PATH=$1
+GET_PATH=$2
+# shellcheck disable=SC1091
+source /bin/normalize_storage
+mc cp minio/"${MINIO_BUCKET}/${TAR_PATH}" "${GET_PATH}"

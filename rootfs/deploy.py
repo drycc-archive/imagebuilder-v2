@@ -64,19 +64,8 @@ def get_registry_name():
 
 
 def download_file(tar_path):
-    os.putenv('BUCKET_FILE', "/var/run/secrets/drycc/objectstore/creds/builder-bucket")
-    if os.getenv('BUILDER_STORAGE') == "minio":
-        os.makedirs("/tmp/objectstore/minio")
-        bucketFile = open('/tmp/objectstore/minio/builder-bucket', 'w')
-        bucketFile.write('git')
-        bucketFile.close()
-        os.putenv('BUCKET_FILE', "/tmp/objectstore/minio/builder-bucket")
-    elif os.getenv('BUILDER_STORAGE') in ["azure", "swift"]:
-        os.putenv('CONTAINER_FILE', "/var/run/secrets/drycc/objectstore/creds/builder-container")
     command = [
-        "objstorage",
-        "--storage-type="+os.getenv('BUILDER_STORAGE'),
-        "download",
+        "get_object",
         tar_path,
         "apptar"
     ]
