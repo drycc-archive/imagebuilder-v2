@@ -1,8 +1,8 @@
 
 # Drycc Dockerbuilder v2
 
-[![Build Status](https://ci.drycc.cc/job/dockerbuilder/badge/icon)](https://ci.drycc.cc/job/dockerbuilder)
-[![codebeat badge](https://codebeat.co/badges/b9039897-fef4-4950-bac8-94503394e6c2)](https://codebeat.co/projects/github-com-drycc-dockerbuilder)
+[![Build Status](https://travis-ci.org/drycc/dockerbuilder.svg?branch=master)](https://travis-ci.org/drycc/dockerbuilder)
+[![codebeat badge](https://codebeat.co/badges/6ffd3a33-b121-4d5b-85e9-f040eb37ad42)](https://codebeat.co/projects/github-com-drycc-dockerbuilder-master)
 [![Docker Repository on Quay](https://quay.io/repository/drycc/dockerbuilder/status "Docker Repository on Quay")](https://quay.io/repository/drycc/dockerbuilder)
 
 Drycc (pronounced DAY-iss) Workflow is an open source Platform as a Service (PaaS) that adds a developer-friendly layer to any [Kubernetes](http://kubernetes.io) cluster, making it easy to deploy and manage applications on your own servers.
