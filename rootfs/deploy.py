@@ -63,8 +63,8 @@ def get_registry_name():
             registry_name = registry_name + organization
     else:
         registry_name = "{}:{}".format(
-            os.getenv("DRYCC_REGISTRY_SERVICE_HOST"),
-            os.getenv("DRYCC_REGISTRY_SERVICE_PORT")
+            os.getenv("DRYCC_REGISTRY_PROXY_HOST"),
+            os.getenv("DRYCC_REGISTRY_PROXY_PORT")
         )
     return insecure, registry_name
 
