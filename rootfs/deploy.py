@@ -37,8 +37,6 @@ def call_kaniko(dockerfile, context, destination, **kwargs):
         "--dockerfile=%s" % dockerfile,
         "--context=%s" % context,
         "--destination=%s" % destination,
-        "--insecure=%s" % kwargs.pop("insecure", "false"),
-        "--insecure-registry=%s" % kwargs.pop("insecure_registry", "false"),
     ]
     command.extend([
         "--build-arg %s=%s" % item for item in kwargs.pop(
@@ -49,12 +47,9 @@ def call_kaniko(dockerfile, context, destination, **kwargs):
 
 def get_registry_name():
     hostname = os.getenv('DRYCC_REGISTRY_HOSTNAME', "")
-    insecure = "false" if hostname.startswith("https") else "true"
     if registryLocation == "off-cluster":
         organization = os.getenv('DRYCC_REGISTRY_ORGANIZATION')
         registry_name = ""
-        # empty hostname means dockerhub and hence no need to prefix the image
-        hostname = hostname.replace("https://", "").replace("http://", "")
         if hostname != "":
             registry_name = hostname + "/"
         # Registries may have organizations/namespaces under them which needs to
@@ -66,7 +61,7 @@ def get_registry_name():
             os.getenv("DRYCC_REGISTRY_PROXY_HOST"),
             os.getenv("DRYCC_REGISTRY_PROXY_PORT")
         )
-    return insecure, registry_name
+    return registry_name
 
 
 def download_file(tar_path):
@@ -104,15 +99,14 @@ def main():
         username = os.getenv('DRYCC_REGISTRY_USERNAME')
         password = os.getenv('DRYCC_REGISTRY_PASSWORD')
         docker_login(username=username, password=password, registry=registry)
-    insecure, registry = get_registry_name()
+    registry = get_registry_name()
     imageName, imageTag = os.getenv('IMG_NAME').split(":", 1)
     repo = registry + "/" + os.getenv('IMG_NAME')
     call_kaniko(
         "/app/Dockerfile",
         context="/app",
         destination=repo,
-        insecure=insecure,
-        insecure_registry=insecure,
+        buildargs=buildargs,
     )
 
 
