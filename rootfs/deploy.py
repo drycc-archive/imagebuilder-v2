@@ -6,7 +6,22 @@ import requests
 import subprocess
 
 DEBUG = os.environ.get('DRYCC_DEBUG') in ('true', '1')
-registryLocation = os.getenv('DRYCC_REGISTRY_LOCATION', 'on-cluster')
+
+CADDY_CONFIG = """
+*:%s {
+  errors stderr
+  proxy / http://%s:%s {
+    websocket
+    transparent
+  }
+}
+""" % (
+    os.getenv("DRYCC_REGISTRY_PROXY_PORT"),
+    os.getenv("DRYCC_REGISTRY_SERVICE_HOST"),
+    os.getenv("DRYCC_REGISTRY_SERVICE_PORT"),
+)
+
+REGISTRY_LOCATION = os.getenv('DRYCC_REGISTRY_LOCATION', 'on-cluster')
 
 
 def log(msg):
@@ -45,9 +60,20 @@ def call_kaniko(dockerfile, context, destination, **kwargs):
     subprocess.check_call(command)
 
 
+def start_localhost_proxy():
+    with open("/etc/Caddyfile", "w") as fd:
+        fd.write(CADDY_CONFIG)
+    command = [
+        "caddy",
+        "--conf",
+        "/etc/Caddyfile",
+    ]
+    return subprocess.Popen(command, stdout=open(os.devnull, "w"))
+
+
 def get_registry_name():
     hostname = os.getenv('DRYCC_REGISTRY_HOSTNAME', "")
-    if registryLocation == "off-cluster":
+    if REGISTRY_LOCATION == "off-cluster":
         organization = os.getenv('DRYCC_REGISTRY_ORGANIZATION')
         registry_name = ""
         if hostname != "":
@@ -64,20 +90,16 @@ def get_registry_name():
     return registry_name
 
 
-def download_file(tar_path):
-    command = [
-        "get_object",
-        tar_path,
-        "apptar"
-    ]
-    subprocess.check_call(command)
-
-
-def main():
+def prepare_dockerfile(buildargs):
     tar_path = os.getenv('TAR_PATH')
     if tar_path:
         if os.path.exists("/var/run/secrets/drycc/objectstore/creds/"):
-            download_file(tar_path)
+            command = [
+                "get_object",
+                tar_path,
+                "apptar"
+            ]
+            subprocess.check_call(command)
         else:
             r = requests.get(tar_path)
             with open("apptar", "wb") as app:
@@ -86,7 +108,6 @@ def main():
     with tarfile.open("apptar", "r:gz") as tar:
         tar.extractall("/app/")
     log("extracting tar file complete")
-    buildargs = json.loads(os.getenv('DOCKER_BUILD_ARGS', '{}'))
     # inject docker build args into the Dockerfile so we get around Dockerfiles
     # that don't have things like PORT defined.
     with open("/app/Dockerfile", "a") as dockerfile:
@@ -94,20 +115,33 @@ def main():
         dockerfile.write("\n")
         for envvar in buildargs:
             dockerfile.write("ARG {}\n".format(envvar))
-    if registryLocation != "on-cluster":
-        registry = os.getenv('DRYCC_REGISTRY_HOSTNAME', 'https://index.docker.io/v1/')
+    log("inject docker build args complete")
+
+
+def main():
+    buildargs = json.loads(os.getenv('DOCKER_BUILD_ARGS', '{}'))
+    prepare_dockerfile(buildargs)
+
+    registry = get_registry_name()
+    if REGISTRY_LOCATION == "on-cluster":
+        docker_login(username="", password="", registry=registry)
+    else:
+        auth_url = os.getenv('DRYCC_REGISTRY_HOSTNAME', 'https://index.docker.io/v1/')
         username = os.getenv('DRYCC_REGISTRY_USERNAME')
         password = os.getenv('DRYCC_REGISTRY_PASSWORD')
-        docker_login(username=username, password=password, registry=registry)
-    registry = get_registry_name()
+        docker_login(username=username, password=password, registry=auth_url)
     imageName, imageTag = os.getenv('IMG_NAME').split(":", 1)
     repo = registry + "/" + os.getenv('IMG_NAME')
-    call_kaniko(
-        "/app/Dockerfile",
-        context="/app",
-        destination=repo,
-        buildargs=buildargs,
-    )
+    proxy_process = start_localhost_proxy()
+    try:
+        call_kaniko(
+            "/app/Dockerfile",
+            context="/app",
+            destination=repo,
+            buildargs=buildargs,
+        )
+    finally:
+        proxy_process.terminate()
 
 
 if __name__ == "__main__":

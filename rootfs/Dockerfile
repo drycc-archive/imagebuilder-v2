@@ -7,6 +7,14 @@ COPY . /
 COPY --from=mc /usr/bin/mc /usr/bin/mc
 COPY --from=kaniko /kaniko /kaniko
 
+ARG CADDY_VERSION=v0.11.5
+RUN mkdir /tmp/caddy \
+  && cd /tmp/caddy \
+  && wget https://github.com/mholt/caddy/releases/download/${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_amd64.tar.gz \
+  && tar -xvzf caddy_v0.11.5_linux_amd64.tar.gz \
+  && cp /tmp/caddy/caddy /usr/bin \
+  && rm -rf /tmp/caddy
+
 RUN apk add --update --virtual .dockerbuilder-rundeps \
     ca-certificates \
     bash \
