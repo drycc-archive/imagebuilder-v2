@@ -6,21 +6,6 @@ import requests
 import subprocess
 
 DEBUG = os.environ.get('DRYCC_DEBUG') in ('true', '1')
-
-CADDY_CONFIG = """
-*:%s {
-  errors stderr
-  proxy / http://%s:%s {
-    websocket
-    transparent
-  }
-}
-""" % (
-    os.getenv("DRYCC_REGISTRY_PROXY_PORT"),
-    os.getenv("DRYCC_REGISTRY_SERVICE_HOST"),
-    os.getenv("DRYCC_REGISTRY_SERVICE_PORT"),
-)
-
 REGISTRY_LOCATION = os.getenv('DRYCC_REGISTRY_LOCATION', 'on-cluster')
 
 
@@ -61,12 +46,15 @@ def call_kaniko(dockerfile, context, destination, **kwargs):
 
 
 def start_localhost_proxy():
-    with open("/etc/Caddyfile", "w") as fd:
-        fd.write(CADDY_CONFIG)
     command = [
         "caddy",
-        "--conf",
-        "/etc/Caddyfile",
+        "--from",
+        ":%s" % os.getenv("DRYCC_REGISTRY_PROXY_PORT"),
+        "--to",
+        "%s:%s" % (
+            os.getenv("DRYCC_REGISTRY_SERVICE_HOST"),
+            os.getenv("DRYCC_REGISTRY_SERVICE_PORT"),
+        ),
     ]
     return subprocess.Popen(command, stdout=open(os.devnull, "w"))
 

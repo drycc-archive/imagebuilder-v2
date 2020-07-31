@@ -1,17 +1,16 @@
-FROM minio/mc:RELEASE.2019-05-23T01-33-27Z as mc
-FROM gcr.io/kaniko-project/executor:v0.9.0 as kaniko
+FROM minio/mc:RELEASE.2020-07-17T02-52-20Z as mc
+FROM gcr.io/kaniko-project/executor:v0.24.0 as kaniko
 
-FROM python:3.7-alpine
+FROM python:3.8-alpine
 
 COPY . /
 COPY --from=mc /usr/bin/mc /usr/bin/mc
 COPY --from=kaniko /kaniko /kaniko
 
-ARG CADDY_VERSION=v0.11.5
 RUN mkdir /tmp/caddy \
   && cd /tmp/caddy \
-  && wget https://github.com/mholt/caddy/releases/download/${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_amd64.tar.gz \
-  && tar -xvzf caddy_v0.11.5_linux_amd64.tar.gz \
+  && wget https://github.com/caddyserver/caddy/releases/download/v2.1.1/caddy_2.1.1_linux_amd64.tar.gz \
+  && tar -xvzf caddy_2.1.1_linux_amd64.tar.gz \
   && cp /tmp/caddy/caddy /usr/bin \
   && rm -rf /tmp/caddy
 
@@ -20,6 +19,6 @@ RUN apk add --update --virtual .dockerbuilder-rundeps \
     bash \
   && pip3 install --disable-pip-version-check \
     --no-cache-dir \
-    requests==2.21.0
+    requests==2.24.0
 
 CMD ["python3", "/deploy.py"]

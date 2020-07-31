@@ -1,10 +1,10 @@
 SHORT_NAME := dockerbuilder
-DRYCC_REGISTRY ?= quay.io/
+DRYCC_REGISTRY ?=
 IMAGE_PREFIX ?= drycc
 
 include versioning.mk
 
-DEV_ENV_IMAGE := quay.io/drycc/python-dev:v0.1.0
+DEV_ENV_IMAGE := drycc/python-dev
 DEV_ENV_WORK_DIR := /app
 DEV_ENV_PREFIX := docker run --rm -v ${CURDIR}/rootfs:${DEV_ENV_WORK_DIR} -w ${DEV_ENV_WORK_DIR}
 DEV_ENV_CMD := ${DEV_ENV_PREFIX} ${DEV_ENV_IMAGE}
