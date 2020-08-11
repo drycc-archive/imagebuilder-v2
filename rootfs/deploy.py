@@ -48,6 +48,7 @@ def call_kaniko(dockerfile, context, destination, **kwargs):
 def start_localhost_proxy():
     command = [
         "caddy",
+        "reverse-proxy",
         "--from",
         ":%s" % os.getenv("DRYCC_REGISTRY_PROXY_PORT"),
         "--to",
