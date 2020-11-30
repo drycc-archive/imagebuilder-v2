@@ -1,20 +1,18 @@
+FROM minio/mc:latest as mc
+
+
 FROM gcr.io/kaniko-project/executor:v0.24.0 as kaniko
+
 
 FROM python:3.8-alpine
 
 COPY . /
+COPY --from=mc /usr/bin/mc /bin/mc
 COPY --from=kaniko /kaniko /kaniko
 
-RUN wget https://dl.min.io/client/mc/release/linux-amd64/mc -O /bin/mc \
-  && chmod +x /bin/mc \
-  && mkdir /tmp/caddy \
-  && cd /tmp/caddy \
-  && wget https://github.com/caddyserver/caddy/releases/download/v2.1.1/caddy_2.1.1_linux_amd64.tar.gz \
-  && tar -xvzf caddy_2.1.1_linux_amd64.tar.gz \
-  && cp /tmp/caddy/caddy /usr/bin \
-  && rm -rf /tmp/caddy
-
-RUN apk add --update --virtual .dockerbuilder-rundeps \
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
+  && apk add --update --virtual .dockerbuilder-rundeps \
+    caddy \
     ca-certificates \
     bash \
   && pip3 install --disable-pip-version-check \
