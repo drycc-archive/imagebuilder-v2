@@ -1,6 +1,7 @@
 SHORT_NAME := dockerbuilder
 DRYCC_REGISTRY ?=
 IMAGE_PREFIX ?= drycc
+PLATFORM ?= linux/amd64,linux/arm64
 
 include versioning.mk
 
@@ -13,6 +14,9 @@ DEV_ENV_CMD := ${DEV_ENV_PREFIX} ${DEV_ENV_IMAGE}
 docker-build:
 	docker build ${DOCKER_BUILD_FLAGS} -t ${IMAGE} rootfs
 	docker tag ${IMAGE} ${MUTABLE_IMAGE}
+
+docker-buildx:
+	docker buildx build --platform ${PLATFORM} ${DOCKER_BUILD_FLAGS} -t ${IMAGE} rootfs --push
 
 test: test-style test-functional
 
