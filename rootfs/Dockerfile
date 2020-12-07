@@ -1,7 +1,7 @@
 FROM minio/mc:latest as mc
 
 
-FROM gcr.io/kaniko-project/executor:v0.24.0 as kaniko
+FROM gcr.io/kaniko-project/executor:v1.3.0 as kaniko
 
 
 FROM python:3.8-alpine
