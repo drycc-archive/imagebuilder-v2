@@ -9,7 +9,7 @@ data:
     [
         {
             "name": "container",
-            "image": "{{.Values.docker_registry}}{{.Values.org}}/dockerbuilder:{{.Values.docker_tag}}"
+            "image": "{{.Values.image_registry}}{{.Values.org}}/dockerbuilder:{{.Values.image_tag}}"
         }
     ]
-  pull_policy: {{ .Values.pull_policy }}
+  image_pull_policy: {{ .Values.image_pull_policy }}
