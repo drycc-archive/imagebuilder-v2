@@ -1,0 +1,7 @@
+name: imagebuilder
+home: https://github.com/drycc/imagebuilder
+version: <Will be populated by the ci before publishing the chart>
+description: Drycc imagebuilder builds your app from a Dockerfile inside a Kubernetes pod, used by Drycc Workflow.
+maintainers:
+  - name: Drycc Team
+    email: engineering@drycc.com

@@ -1,8 +1,8 @@
 
-# Drycc Dockerbuilder v2
+# Drycc Imagebuilder v2
 
-[![Build Status](https://travis-ci.org/drycc/dockerbuilder.svg?branch=main)](https://travis-ci.org/drycc/dockerbuilder)
-[![codebeat badge](https://codebeat.co/badges/6ffd3a33-b121-4d5b-85e9-f040eb37ad42)](https://codebeat.co/projects/github-com-drycc-dockerbuilder-main)
+[![Build Status](https://travis-ci.org/drycc/imagebuilder.svg?branch=main)](https://travis-ci.org/drycc/imagebuilder)
+[![codebeat badge](https://codebeat.co/badges/6ffd3a33-b121-4d5b-85e9-f040eb37ad42)](https://codebeat.co/projects/github-com-drycc-imagebuilder-main)
 
 Drycc (pronounced DAY-iss) Workflow is an open source Platform as a Service (PaaS) that adds a developer-friendly layer to any [Kubernetes](http://kubernetes.io) cluster, making it easy to deploy and manage applications on your own servers.
 
@@ -15,7 +15,7 @@ We welcome your input! If you have feedback, please [submit an issue][issues]. I
 
 # About
 
-The Dockerbuilder downloads a git archive ([gzip](http://www.gzip.org/)ped [tar](https://www.gnu.org/software/tar/)ball) from a specified [S3 API compatible server][s3-api] and runs `docker build` on it. When the build is done, it runs `docker push` to push the resulting image to a specified [Docker](https://www.docker.com/) repository.
+The Imagebuilder downloads a git archive ([gzip](http://www.gzip.org/)ped [tar](https://www.gnu.org/software/tar/)ball) from a specified [S3 API compatible server][s3-api] and runs `docker build` on it. When the build is done, it runs `docker push` to push the resulting image to a specified [Docker](https://www.docker.com/) repository.
 
 This component is usually launched by the [Drycc Builder](https://github.com/drycc/builder) and used inside the Drycc [PaaS](https://en.wikipedia.org/wiki/Platform_as_a_service), but it is flexible enough to be used as a pod inside any Kubernetes cluster.
 

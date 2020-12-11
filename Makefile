@@ -1,4 +1,4 @@
-SHORT_NAME := dockerbuilder
+SHORT_NAME := imagebuilder
 DRYCC_REGISTRY ?=
 IMAGE_PREFIX ?= drycc
 PLATFORM ?= linux/amd64,linux/arm64

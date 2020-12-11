@@ -11,7 +11,7 @@ COPY --from=mc /usr/bin/mc /bin/mc
 COPY --from=kaniko /kaniko /kaniko
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
-  && apk add --update --virtual .dockerbuilder-rundeps \
+  && apk add --update --virtual .imagebuilder-rundeps \
     caddy \
     ca-certificates \
     bash \
