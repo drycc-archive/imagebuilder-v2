@@ -1,10 +1,10 @@
-FROM minio/mc:latest as mc
+FROM docker.io/minio/mc:latest as mc
 
 
 FROM gcr.io/kaniko-project/executor:v1.3.0 as kaniko
 
 
-FROM python:3.8-alpine
+FROM docker.io/library/python:3.8-alpine
 
 COPY . /
 COPY --from=mc /usr/bin/mc /bin/mc
