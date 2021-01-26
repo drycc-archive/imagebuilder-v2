@@ -9,7 +9,7 @@ data:
     [
         {
             "name": "container",
-            "image": "{{.Values.image_registry}}{{.Values.org}}/imagebuilder:{{.Values.image_tag}}"
+            "image": "{{.Values.image_registry}}/{{.Values.org}}/imagebuilder:{{.Values.image_tag}}"
         }
     ]
   image_pull_policy: {{ .Values.image_pull_policy }}
