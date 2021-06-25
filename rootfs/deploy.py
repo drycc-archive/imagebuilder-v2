@@ -61,8 +61,8 @@ def start_localhost_proxy():
 
 
 def get_registry_name():
-    hostname = os.getenv('DRYCC_REGISTRY_HOSTNAME', "")
     if REGISTRY_LOCATION == "off-cluster":
+        hostname = os.getenv('DRYCC_REGISTRY_HOSTNAME', "")
         organization = os.getenv('DRYCC_REGISTRY_ORGANIZATION')
         registry_name = ""
         if hostname != "":
